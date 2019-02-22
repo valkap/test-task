@@ -64,10 +64,10 @@ Class valkap_parser extends CModule
     {
         if(!CModule::IncludeModule("iblock"))
             return;
-        /*
+
         if(!CModule::IncludeModule("catalog"))
             return;
-*/
+
         //add type iblock
         $res = CIBlockType::GetByID("valkap_parser");
         if(!$v = $res->GetNext())
@@ -120,15 +120,15 @@ Class valkap_parser extends CModule
                     "WORKFLOW" => "N",
                     "SITE_ID" => $arSiteID[$i]
                 );
-                $ib->Add($arFields);
+                $iblockID = $ib->Add($arFields);
             }
 
-        //transform iblock in catalog
-        /*
+        //transform iblock to catalog
 		$arFields = array(
-            'IBLOCK_ID' => $ib,
+            'IBLOCK_ID' => $iblockID,
         );
         $boolResult = CCatalog::Add($arFields);
+
         if ($boolResult == false)
         {
             if ($ex = $APPLICATION->GetException())
@@ -137,7 +137,7 @@ Class valkap_parser extends CModule
                 ShowError($strError);
             }
         }
-*/
+
         //add props
         $res = CIBlock::GetList(Array(),Array("CODE"=>'valkap_parser'),true);
         $ar_res = $res->Fetch();
