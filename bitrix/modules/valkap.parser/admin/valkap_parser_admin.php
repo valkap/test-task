@@ -62,15 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     $csvFile->LoadFile($_SERVER["DOCUMENT_ROOT"].$DATA_FILE_NAME);
     $csvFile->SetDelimiter(';');
 
-    //get list property VENDOR
-/*    $arVendor = array();
-    $property_enums = CIBlockPropertyEnum::GetList(Array("DEF"=>"DESC", "SORT"=>"ASC"), Array("IBLOCK_ID"=>$iblockID, "CODE"=>"VENDOR"));
-    while($enum_fields = $property_enums->GetNext())
-    {
-        $arVendor[$enum_fields["ID"]] = $enum_fields["VALUE"];
-    }
-*/
-
     while ($arRes = $csvFile->Fetch())
     {
         $res = CIBlockElement::GetList(Array(), array("IBLOCK_ID" => $iblockID, "CODE" => $arRes[0]));
@@ -78,12 +69,24 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
         {
            $elID = $ob["ID"];
 
+            $el = new CIBlockElement;
+
+            $arLoadProductArray = Array(
+                "MODIFIED_BY"    => $USER->GetID(),
+                "IBLOCK_SECTION" => false,
+                "PROPERTY_VALUES"=> ValkapParser::GetPropertyArray($arRes, $iblockID),
+                "NAME"           => $arRes[1],
+            );
+
+            if($el->Update($elID, $arLoadProductArray))
+                $countUpdate++;
+            else
+                echo "Error: ".$el->LAST_ERROR;
+
         }
         else //element add
         {
             $el = new CIBlockElement;
-
-
 
             $arLoadProductArray = Array(
                 "MODIFIED_BY"    => $USER->GetID(),
