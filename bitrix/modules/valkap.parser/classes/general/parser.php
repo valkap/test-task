@@ -47,4 +47,58 @@ class ValkapParser
         $PROP["MATERIAL"] = $arRes[3];
         return $PROP;
     }
+
+    public static function Update($elID, $price, $count)
+    {
+        //add (update) count
+        $fieldsCatalog = array(
+            "ID" => $elID,
+            "TYPE" => \Bitrix\Catalog\ProductTable::TYPE_PRODUCT,
+            "QUANTITY" => $count,
+        );
+
+        $result = \Bitrix\Catalog\Model\Product::Update($elID, $fieldsCatalog);
+        if ($result->isSuccess())
+        {
+            echo "Добавил количество товаров " . $elID . " Количество " . $count . PHP_EOL;
+        }
+        else {
+            echo "Ошибка добавления количества товара " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+        }
+
+        //add (update) price
+        $arFieldsPrice = Array(
+            "PRODUCT_ID" => $elID,
+            "CATALOG_GROUP_ID" => 1,
+            "PRICE" => $price,
+            "CURRENCY" => "UAH",
+        );
+
+        $dbPrice = \Bitrix\Catalog\Model\Price::getList([
+            "filter" => array(
+                "PRODUCT_ID" => $elID,
+                "CATALOG_GROUP_ID" => 1
+            )]);
+
+
+        if ($arPrice = $dbPrice->fetch()) {
+            $result = \Bitrix\Catalog\Model\Price::update($arPrice["ID"], $arFieldsPrice);
+            if ($result->isSuccess())
+            {
+                echo "Обновили цену у товара у элемента каталога " . $elID . " Цена " . $price . PHP_EOL;
+            }
+            else {
+                echo "Ошибка обновления цены у товара у элемента каталога " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+            }
+        }else{
+            $result = \Bitrix\Catalog\Model\Price::add($arFieldsPrice);
+            if ($result->isSuccess())
+            {
+                echo "Добавили цену у товара у элемента каталога " . $elID . " Цена " . $price . PHP_EOL;
+            }
+            else {
+                echo "Ошибка добавления цены у товара у элемента каталога " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+            }
+        }
+    }
 }

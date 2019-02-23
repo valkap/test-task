@@ -1,9 +1,12 @@
 <?
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
-CModule::IncludeModule("iblock");
 require_once ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/iblock/prolog.php");
 require_once ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/valkap.parser/include.php");
 IncludeModuleLangFile(__FILE__);
+
+use Bitrix\Main\Loader;
+Loader::includeModule("iblock");
+Loader::includeModule('catalog');
 
 $io = CBXVirtualIo::GetInstance();
 
@@ -83,6 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
             else
                 echo "Error: ".$el->LAST_ERROR;
 
+
+            ValkapParser::Update($elID, $arRes[5], $arRes[4]);
         }
         else //element add
         {
@@ -99,7 +104,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
             );
 
             if($PRODUCT_ID = $el->Add($arLoadProductArray))
+            {
+                $fields = array(
+                    'ID' => $PRODUCT_ID,
+                    'TYPE' => \Bitrix\Catalog\ProductTable::TYPE_PRODUCT,
+                );
+                \Bitrix\Catalog\Model\Product::Add($fields);
+
+                ValkapParser::Update($PRODUCT_ID, $arRes[5], $arRes[4]);
                 $countAdd ++;
+            }
+
             else
                 echo "Error: ".$el->LAST_ERROR;
         }
