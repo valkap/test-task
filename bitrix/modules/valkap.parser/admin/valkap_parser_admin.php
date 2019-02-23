@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     $property_enums = CIBlockPropertyEnum::GetList(Array("DEF"=>"DESC", "SORT"=>"ASC"), Array("IBLOCK_ID"=>$iblockID, "CODE"=>"VENDOR"));
     while($enum_fields = $property_enums->GetNext())
     {
-        $arVendor["ID"] = $enum_fields["VALUE"];
+        $arVendor[$enum_fields["ID"]] = $enum_fields["VALUE"];
     }
 
     while ($arRes = $csvFile->Fetch())
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
         $res = CIBlockElement::GetList(Array(), array("IBLOCK_ID" => $iblockID, "CODE" => $arRes[0]));
         if($ob = $res->GetNextElement()) //element update
         {
-           $elementID = $ob["ID"];
+           //$elementID = $ob["ID"];
 
         }
         else //element add
