@@ -7,6 +7,12 @@
  */
 class ValkapParser
 {
+    /**
+     * get ID property type LIST
+     * @param $propertyCode - code property
+     * @param $iblockID - iblock ID
+     * @return mixed
+     */
     function GetPropertyId($propertyCode, $iblockID)
     {
         $properties = CIBlockProperty::GetList(Array("sort"=>"asc", "name"=>"asc"), Array("ACTIVE"=>"Y", "IBLOCK_ID"=>$iblockID,"CODE"=>$propertyCode));
@@ -15,6 +21,12 @@ class ValkapParser
             return $prop_fields["ID"];
         }
     }
+
+    /**
+     * get list value property VENDOR
+     * @param $iblockID - iblock ID
+     * @return array - ID  -> value
+     */
 
     function GetPropertyVendor($iblockID)
     {

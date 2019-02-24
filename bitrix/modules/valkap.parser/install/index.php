@@ -48,14 +48,14 @@ Class valkap_parser extends CModule
 
 	function InstallFiles($arParams = array())
 	{
-        //CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/valkap.parser/install/components", $_SERVER["DOCUMENT_ROOT"]."/bitrix/components", true, true);
+        CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/valkap.parser/install/components", $_SERVER["DOCUMENT_ROOT"]."/bitrix/components/valkap", true, true);
         CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/valkap.parser/install/admin/valkap_parser_admin.php", $_SERVER["DOCUMENT_ROOT"]."/bitrix/admin/valkap_parser_admin.php", true, true);
 		return true;
 	}
 
     function UnInstallFiles()
     {
-        //DeleteDirFilesEx("/bitrix/components/valkap/section.list");
+        DeleteDirFilesEx("/bitrix/components/valkap/catalog.section");
         DeleteDirFilesEx("/bitrix/admin/valkap_parser_admin.php");
         return true;
     }

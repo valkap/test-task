@@ -129,6 +129,15 @@ require ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_af
 ?>
 
 <div class="adm-detail-content-item-block">
+    <?
+    if ($countUpdate > 0 || $countAdd > 0)
+    {?>
+       <div class="result-msg">
+           <p>Добавлено записей - <?=$countAdd?></p>
+           <p>Обновлено записей - <?=$countUpdate?></p>
+       </div>
+    <?}
+    ?>
     <form method="POST" action="<?=$APPLICATION->GetCurPage();?>?lang=<?=LANGUAGE_ID; ?>" ENCTYPE="multipart/form-data" name="dataload" id="dataload">
         <table class="adm-detail-content-table edit-table">
         <tr>
