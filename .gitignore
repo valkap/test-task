@@ -1,0 +1,8 @@
+/*
+!bitrix/
+bitrix/*
+!bitrix/modules/
+bitrix/modules/*
+!bitrix/modules/valkap.parser/
+!.gitignore
+!valkap.parser.tar.gz

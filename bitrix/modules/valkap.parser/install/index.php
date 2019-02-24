@@ -68,6 +68,9 @@ Class valkap_parser extends CModule
         if(!CModule::IncludeModule("catalog"))
             return;
 
+        if(!CModule::IncludeModule("main"))
+            return;
+
         //add type iblock
         $res = CIBlockType::GetByID("valkap_parser");
         if(!$v = $res->GetNext())
@@ -131,7 +134,7 @@ Class valkap_parser extends CModule
 
         if ($boolResult == false)
         {
-            if ($ex = $APPLICATION->GetException())
+            if ($ex = CMain::GetException())
             {
                 $strError = $ex->GetString();
                 ShowError($strError);
