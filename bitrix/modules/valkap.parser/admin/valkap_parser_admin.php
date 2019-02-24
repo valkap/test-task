@@ -129,12 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
                 echo "Error: ".$el->LAST_ERROR;
         }
     }
-    session_start();
-    $_SESSION['error'] = $strError;
-    $_SESSION['add'] = $countAdd;
-    $_SESSION['update'] = $countUpdate;
-
-    header('Location:'.$APPLICATION->GetCurPage());
+    header('Location:'.$APPLICATION->GetCurPageParam('err='.$strError.'&add='.$countAdd.'&update='.$countUpdate));
 }
 
 ?>
@@ -145,10 +140,9 @@ require ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_af
 
 <div class="adm-detail-content-item-block">
     <?
-    session_start();
-    $strError = strval($_SESSION['error']);
-    $countAdd = intval($_SESSION['add']);
-    $countUpdate = intval($_SESSION['update']);
+    $strError = strval($_GET['err']);
+    $countUpdate = intval($_GET['update']);
+    $countAdd = intval($_GET['add']);
 
     if ($countUpdate > 0 || $countAdd > 0 || strlen($strError) > 0)
     {?>
