@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     $iblockID = strval($_POST["IBLOCK_ID"]);
     $countAdd = 0;
     $countUpdate = 0;
+    $strError = '';
 
     require_once ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/csv_data.php");
     $csvFile = new CCSVData('R', true);
@@ -67,7 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 
     while ($arRes = $csvFile->Fetch())
     {
-        $res = CIBlockElement::GetList(Array(), array("IBLOCK_ID" => $iblockID, "CODE" => $arRes[0]));
+        $res = \Bitrix\Iblock\ElementTable::getList(array(
+            'select' => array('ID', 'NAME', 'IBLOCK_ID', 'CODE'),
+            'filter' => array('IBLOCK_ID' => $iblockID, "CODE" => $arRes[0])
+        ));
         if($ob = $res->Fetch()) //element update
         {
            $elID = $ob["ID"];
@@ -87,7 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
                 echo "Error: ".$el->LAST_ERROR;
 
 
-            ValkapParser::Update($elID, $arRes[5], $arRes[4]);
+            if (!ValkapParser::Update($elID, $arRes[5], $arRes[4]))
+            {
+                $strError .= GetMessage("VALKAP_PARSER_ERROR_UPDATE").' '.$elID.'<br>';
+            }
         }
         else //element add
         {
@@ -111,7 +118,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
                 );
                 \Bitrix\Catalog\Model\Product::Add($fields);
 
-                ValkapParser::Update($PRODUCT_ID, $arRes[5], $arRes[4]);
+            if (!ValkapParser::Update($PRODUCT_ID, $arRes[5], $arRes[4]))
+                {
+                    $strError .= GetMessage("VALKAP_PARSER_ERROR_UPDATE").' '.$PRODUCT_ID.'<br>';
+                }
                 $countAdd ++;
             }
 
@@ -119,7 +129,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
                 echo "Error: ".$el->LAST_ERROR;
         }
     }
+    session_start();
+    $_SESSION['error'] = $strError;
+    $_SESSION['add'] = $countAdd;
+    $_SESSION['update'] = $countUpdate;
 
+    header('Location:'.$APPLICATION->GetCurPage());
 }
 
 ?>
@@ -130,13 +145,20 @@ require ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_af
 
 <div class="adm-detail-content-item-block">
     <?
-    if ($countUpdate > 0 || $countAdd > 0)
+    session_start();
+    $strError = strval($_SESSION['error']);
+    $countAdd = intval($_SESSION['add']);
+    $countUpdate = intval($_SESSION['update']);
+
+    if ($countUpdate > 0 || $countAdd > 0 || strlen($strError) > 0)
     {?>
        <div class="result-msg">
+           <?=$strError?>
            <p>Добавлено записей - <?=$countAdd?></p>
            <p>Обновлено записей - <?=$countUpdate?></p>
        </div>
     <?}
+
     ?>
     <form method="POST" action="<?=$APPLICATION->GetCurPage();?>?lang=<?=LANGUAGE_ID; ?>" ENCTYPE="multipart/form-data" name="dataload" id="dataload">
         <table class="adm-detail-content-table edit-table">

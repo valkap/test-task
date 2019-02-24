@@ -70,12 +70,10 @@ class ValkapParser
         );
 
         $result = \Bitrix\Catalog\Model\Product::Update($elID, $fieldsCatalog);
-        if ($result->isSuccess())
+        if (!$result->isSuccess())
         {
-            echo "Добавил количество товаров " . $elID . " Количество " . $count . PHP_EOL;
-        }
-        else {
-            echo "Ошибка добавления количества товара " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+            //echo "Ошибка добавления количества товара " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+            return false;
         }
 
         //add (update) price
@@ -95,22 +93,19 @@ class ValkapParser
 
         if ($arPrice = $dbPrice->fetch()) {
             $result = \Bitrix\Catalog\Model\Price::update($arPrice["ID"], $arFieldsPrice);
-            if ($result->isSuccess())
+            if (!$result->isSuccess())
             {
-                echo "Обновили цену у товара у элемента каталога " . $elID . " Цена " . $price . PHP_EOL;
-            }
-            else {
-                echo "Ошибка обновления цены у товара у элемента каталога " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+                //echo "Ошибка обновления цены у товара у элемента каталога " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+                return false;
             }
         }else{
             $result = \Bitrix\Catalog\Model\Price::add($arFieldsPrice);
-            if ($result->isSuccess())
+            if (!$result->isSuccess())
             {
-                echo "Добавили цену у товара у элемента каталога " . $elID . " Цена " . $price . PHP_EOL;
-            }
-            else {
-                echo "Ошибка добавления цены у товара у элемента каталога " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+                //echo "Ошибка добавления цены у товара у элемента каталога " . $elID . " Ошибка " . $result->getErrorMessages() . PHP_EOL;
+                return false;
             }
         }
+        return true;
     }
 }
